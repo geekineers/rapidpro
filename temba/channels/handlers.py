@@ -1485,7 +1485,8 @@ class ChikkaHandler(View):
                 for sms_obj in sms:
                     sms_obj.fail()
 
-            return HttpResponse("Accepted. SMS Status Updated")
+            # return HttpResponse("Accepted. SMS Status Updated")
+            return HttpResponse("Accepted")
 
         # this is a new incoming message
         elif action == 'incoming':
@@ -1498,11 +1499,14 @@ class ChikkaHandler(View):
             gmt_date = pytz.timezone('GMT').localize(sms_date)
 
             urn = URN.from_tel(request.REQUEST['mobile_number'])
-            sms = Msg.create_incoming(channel, urn, request.REQUEST['message'], date=gmt_date)
+
+            sms = Msg.create_incoming(channel, urn, request.REQUEST['message'], date=gmt_date, external_id=request.REQUEST['request_id'])
 
             # save our request id in case of replies
             Msg.all_messages.filter(pk=sms.id).update(external_id=request.REQUEST['request_id'])
-            return HttpResponse("Accepted: %d" % sms.id)
+            
+            # return HttpResponse("Accepted: %d" % sms.id)
+            return HttpResponse("Accepted")
 
         else:
             return HttpResponse("Error, unknown message type", status=400)

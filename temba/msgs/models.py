@@ -1133,9 +1133,10 @@ class Msg(models.Model):
 
     @classmethod
     def create_incoming(cls, channel, urn, text, user=None, date=None, org=None, contact=None,
-                        status=PENDING, media=None, msg_type=None, topup=None):
+                        status=PENDING, media=None, msg_type=None, topup=None, external_id=None):
 
         from temba.api.models import WebHookEvent, SMS_RECEIVED
+
         if not org and channel:
             org = channel.org
 
@@ -1188,7 +1189,8 @@ class Msg(models.Model):
                         direction=INCOMING,
                         msg_type=msg_type,
                         media=media,
-                        status=status)
+                        status=status,
+                        external_id=external_id)
 
         if topup_id is not None:
             msg_args['topup_id'] = topup_id
